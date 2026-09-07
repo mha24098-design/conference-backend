@@ -8,14 +8,21 @@ class Conference extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+   protected $fillable = [
     'title',
     'description',
     'admin_id',
     'category_id',
     'status',
     'stream_url',
-    'qr_code'
+    'qr_code',
+    'start_date',
+    'end_date',
+];
+
+protected $casts = [
+    'start_date' => 'datetime',
+    'end_date' => 'datetime',
 ];
 
    public function admin()

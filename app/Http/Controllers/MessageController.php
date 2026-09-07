@@ -35,9 +35,7 @@ class MessageController extends Controller
             'message' => $request->message,
         ]);
 
-
         broadcast(new MessageSent($message))->toOthers();
-     
 
         return response()->json([
             'success' => true,
@@ -49,5 +47,30 @@ class MessageController extends Controller
                 'message' => $message->message,
             ]
         ], 201);
+    }
+
+
+    public function getMessages($conference)
+    {
+        $participation = ConferenceParticipation::where('user_id', Auth::id())
+            ->where('conference_id', $conference)
+            ->where('participation_status', 'accepted')
+            ->first();
+
+        if (!$participation) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not part of this conference'
+            ], 403);
+        }
+
+        $messages = Message::where('conference_id', $conference)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $messages
+        ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\ParticipantAudioController;
 use App\Http\Controllers\StreamingController;
 use App\Http\Controllers\AuthController;
@@ -36,35 +37,6 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware('auth:sanctum')->group(function () {
 
 
-
-Route::get('/conferences/{conference}', [ConferenceController::class, 'show']);
-
-
-
-Route::post(
-    '/conferences/{conference}/participants/{user}/mute',
-    [ParticipantAudioController::class, 'mute']
-);
-
-Route::post(
-    '/conferences/{conference}/participants/{user}/unmute',
-    [ParticipantAudioController::class, 'unmute']
-);
-
-
-
-
-Route::post('/conferences/{conference}/stream/start', [
-    StreamingController::class,
-    'start'
-]);
-
-Route::post('/conferences/{conference}/stream/stop', [
-    StreamingController::class,
-    'stop'
-]);
-
-
     /*
     |--------------------------------------------------------------------------
     | Authentication
@@ -89,14 +61,20 @@ Route::post('/conferences/{conference}/stream/stop', [
     |--------------------------------------------------------------------------
     */
 
+
+    Route::get('/conferences/my', [
+        ConferenceController::class,
+        'myConferences'
+    ]);
+
     Route::post('/conferences', [
         ConferenceController::class,
         'store'
     ]);
 
-    Route::get('/conferences/my', [
+    Route::get('/conferences/{conference}', [
         ConferenceController::class,
-        'myConferences'
+        'show'
     ]);
 
     Route::post('/conferences/{conference}/invite', [
@@ -104,6 +82,43 @@ Route::post('/conferences/{conference}/stream/stop', [
         'invite'
     ]);
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Participant Audio
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post(
+        '/conferences/{conference}/participants/{user}/mute',
+        [ParticipantAudioController::class, 'mute']
+    );
+
+    Route::post(
+        '/conferences/{conference}/participants/{user}/unmute',
+        [ParticipantAudioController::class, 'unmute']
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Streaming
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post('/conferences/{conference}/stream/start', [
+        StreamingController::class,
+        'start'
+    ]);
+
+    Route::post('/conferences/{conference}/stream/stop', [
+        StreamingController::class,
+        'stop'
+    ]);
+
+
+    Route::post('/conferences/{conference}/end', [
+        StreamingController::class, 'end']);
 
     /*
     |--------------------------------------------------------------------------
@@ -170,7 +185,15 @@ Route::post('/conferences/{conference}/stream/stop', [
         'sendMessage'
     ]);
 
+    Route::post('/send-message', [
+    MessageController::class,
+    'sendMessage'
+]);
 
+Route::get('/conferences/{conference}/messages', [
+    MessageController::class,
+    'getMessages'
+]);
     /*
     |--------------------------------------------------------------------------
     | WebRTC Signaling
